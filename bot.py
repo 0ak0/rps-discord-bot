@@ -18,6 +18,8 @@ client = commands.Bot(command_prefix='rps!')
 # Both players are DM'ed and choose Rock, Paper, or Scissors
 # Once both answers are in, choose winner (R>S, P>R, S>P)
 
+channelid = None
+
 
 @client.event
 async def on_ready():
@@ -27,7 +29,11 @@ async def on_ready():
 
 @client.command(name='play', help='Play a game!')
 async def _play(ctx, *, member: discord.Member):
+    global channelid
     print('LOG: ' + str(ctx.author) + ' requested "Play"')
+    channel = ctx.channel
+    channelid = channel.id
+    #channelsend = client.get_channel(channelid)
     player1 = ctx.author
     player1id = ctx.author.id
     yes = '👍'
@@ -61,16 +67,25 @@ async def info_error(ctx, error):
         await ctx.send('**To play a game, mention someone!** `rps!play @Friend`')
 
 
-async def winning(ctx, player1, player2, p1r, p2r, p1p, p2p, p1s, p2s):
-    if p1r and p2r or p1p and p2p or p1s and p2s:
-        ctx.send('**It\'s a tie!**')
-    if p1r and p2s or p1p and p2r or p1s and p2p:
-        ctx.send('**' + player1 + ' won!**')
-    else:
-        ctx.send('**' + player2 + ' won!**')
+confirmed1 = False
+confirmed2 = False
+p1r = False
+p1p = False
+p1s = False
+p2r = False
+p2p = False
+p2s = False
 
 
 async def game(ctx, player1, player2, player1id, player2id):
+    global confirmed1
+    global confirmed2
+    global p1r
+    global p2r
+    global p1s
+    global p2s
+    global p1p
+    global p2p
     user1 = client.get_user(player1id) # person who input command
     user2 = client.get_user(player2id) # person who accepted
     rock = '✊'
@@ -92,14 +107,17 @@ async def game(ctx, player1, player2, player1id, player2id):
     p2s = False
     confirmed1 = False
     confirmed2 = False
+
     def check(reaction, user):
         return user == player1 and str(reaction.emoji) in ['✊', '✋', '✌']
 
     async def confirm1():
+        global confirmed1
         await user1.send('Selected! ✅')
         confirmed1 = True
 
     async def confirm2():
+        global confirmed2
         await user2.send('Selected! ✅')
         confirmed2 = True
 
@@ -137,9 +155,33 @@ async def game(ctx, player1, player2, player1id, player2id):
             await confirm2()
             p2s = True
             loop = 1
-    if confirmed1 and confirmed2:
-        print('confirm test')
-        await winning(ctx, player1, player2, p1r, p2r, p1p, p2p, p1s, p2s)
+    if confirmed1 is True and confirmed2 is True:
+        await winning(ctx, player1, player2)
 
+
+async def winning(ctx, player1, player2):
+    global channelid
+    print(str(channelid))
+    global p1r
+    global p2r
+    global p1s
+    global p2s
+    global p1p
+    global p2p
+    print(str(p1r))
+    print(str(p2r))
+    print(str(p1p))
+    print(str(p2p))
+    print(str(p1s))
+    print(str(p2s))
+    if p1r is True and p2r is True or p1p and p2p is True or p1s is True and p2s is True:
+        print("TIE")
+        await ctx.channelid.send('**It\'s a tie between ' + player1 + 'and ' + player2 + '!**')
+    elif p1r is True and p2s is True or p1p is True and p2r is True or p1s is True and p2p is True:
+        print("P1 WIN")
+        await ctx.channelid.send('**' + player1 + ' won against ' + player2 + '!**')
+    else:
+        print("P2 WIN")
+        await ctx.channelid.send('**' + player2 + ' won against ' + player1 + '!**')
 
 client.run(token)
