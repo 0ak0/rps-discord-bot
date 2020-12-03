@@ -18,8 +18,6 @@ client = commands.Bot(command_prefix='rps!')
 # Both players are DM'ed and choose Rock, Paper, or Scissors
 # Once both answers are in, choose winner (R>S, P>R, S>P)
 
-channelid = None
-
 
 @client.event
 async def on_ready():
@@ -29,11 +27,7 @@ async def on_ready():
 
 @client.command(name='play', help='Play a game!')
 async def _play(ctx, *, member: discord.Member):
-    global channelid
     print('LOG: ' + str(ctx.author) + ' requested "Play"')
-    channel = ctx.channel
-    channelid = channel.id
-    #channelsend = client.get_channel(channelid)
     player1 = ctx.author
     player1id = ctx.author.id
     yes = '👍'
@@ -160,8 +154,6 @@ async def game(ctx, player1, player2, player1id, player2id):
 
 
 async def winning(ctx, player1, player2):
-    global channelid
-    print(str(channelid))
     global p1r
     global p2r
     global p1s
@@ -176,12 +168,12 @@ async def winning(ctx, player1, player2):
     print(str(p2s))
     if p1r is True and p2r is True or p1p and p2p is True or p1s is True and p2s is True:
         print("TIE")
-        await ctx.channelid.send('**It\'s a tie between ' + player1 + 'and ' + player2 + '!**')
+        await ctx.send('**It\'s a tie between ' + str(player1) + 'and ' + str(player2) + '!**')
     elif p1r is True and p2s is True or p1p is True and p2r is True or p1s is True and p2p is True:
         print("P1 WIN")
-        await ctx.channelid.send('**' + player1 + ' won against ' + player2 + '!**')
+        await ctx.send('**' + str(player1) + ' won against ' + str(player2) + '!**')
     else:
         print("P2 WIN")
-        await ctx.channelid.send('**' + player2 + ' won against ' + player1 + '!**')
+        await ctx.send('**' + str(player2) + ' won against ' + str(player1) + '!**')
 
 client.run(token)
