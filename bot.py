@@ -86,13 +86,14 @@ async def game(ctx, player1, player2, player1id, player2id):
     paper = '✋'
     scissors = '✌'
     msg1 = await user1.send('Game with ' + str(player2) + '\nReact with your choice of Rock, Paper, or Scissors:')
-    msg2 = await user2.send('Game with ' + str(player1) + '\nReact with your choice of Rock, Paper, or Scissors:')
+    await user2.send('Please wait for ' + str(player1) + ' to make a choice...')
+    #msg2 = await user2.send('Game with ' + str(player1) + '\nReact with your choice of Rock, Paper, or Scissors:')
     await msg1.add_reaction(rock)
-    await msg2.add_reaction(rock)
+    #await msg2.add_reaction(rock)
     await msg1.add_reaction(paper)
-    await msg2.add_reaction(paper)
+    #await msg2.add_reaction(paper)
     await msg1.add_reaction(scissors)
-    await msg2.add_reaction(scissors)
+    #await msg2.add_reaction(scissors)
     p1r = False
     p1p = False
     p1s = False
@@ -133,6 +134,11 @@ async def game(ctx, player1, player2, player1id, player2id):
 
     def check(reaction, user):
         return user == player2 and str(reaction.emoji) in ['✊', '✋', '✌']
+
+    msg2 = await user2.send('Game with ' + str(player1) + '\nReact with your choice of Rock, Paper, or Scissors:')
+    await msg2.add_reaction(scissors)
+    await msg2.add_reaction(paper)
+    await msg2.add_reaction(rock)
 
     loop = 0
     while loop == 0:
